@@ -6,13 +6,13 @@ import genshin
 
 slot_size = (267,267)
 
-bg = Image.open('cart.png')
-z_bg = Image.open('cart.png')
-font_stats = ImageFont.truetype("Genshin_Impact.ttf", 57)
-font_name = ImageFont.truetype("Genshin_Impact.ttf", 34)
-font_name_text = ImageFont.truetype("Genshin_Impact.ttf", 24)
+bg = Image.open('img/cart.png')
+z_bg = Image.open('img/cart.png')
+font_stats = ImageFont.truetype("font/Genshin_Impact.ttf", 57)
+font_name = ImageFont.truetype("font/Genshin_Impact.ttf", 34)
+font_name_text = ImageFont.truetype("font/Genshin_Impact.ttf", 24)
 
-avatar = Image.open('ava.png')
+avatar = Image.open('img/ava.png')
 avatar.thumbnail(slot_size)
 
 async def up_img(img):
@@ -40,6 +40,8 @@ class PlayerСard(object):
             self.HtokenId = HtokenId
             self.Hid = Hid
             GenStats = asyncio.run(get_client(Hid,HtokenId))
+            if not GenStats:
+                return False
             self.uid = GenStats.uid, 
             self.level = GenStats.level
             self.nickname = GenStats.nickname
@@ -57,6 +59,7 @@ class PlayerСard(object):
         if uid != 0:
             client = genshin.Client(self.cookies)
             record = await client.get_record_card(fuid) #Имя игрока
+            info: dict[str, int] = collections.namedtuple('GenStats', ['uid','level','nickname','server_name'])
             try:
                 uid = record.uid
                 level = record.level
