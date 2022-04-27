@@ -1,5 +1,4 @@
 from PIL import Image, ImageDraw, ImageFont
-from io import BytesIO
 
 import collections
 import asyncio
@@ -13,13 +12,12 @@ font_stats = ImageFont.truetype("Genshin_Impact.ttf", 57)
 font_name = ImageFont.truetype("Genshin_Impact.ttf", 34)
 font_name_text = ImageFont.truetype("Genshin_Impact.ttf", 24)
 
-avatar = Image.open('card/ava.png')
+avatar = Image.open('ava.png')
 avatar.thumbnail(slot_size)
 
 async def up_img(img):
-    bytes = BytesIO()
-
     img.save("Card.png")
+    print('save')
 
 async def get_client(Hid,HtokenId):
     try:
