@@ -13,3 +13,12 @@ _Небольшой скрипт, для создания красивой ка�
 * Pythonanywhere: `pip3 install --user Pillow`
 * requirements.txt: `Pillow 9.1.0`
 
+# Запуск:
+~~~python
+from main import PlayerСard
+import asyncio
+
+card = PlayerСard(HtokenId = "HoYoLab_Token", Hid = HoYoLab_id)
+
+asyncio.run(card.creat())
+~~~
