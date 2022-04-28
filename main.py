@@ -19,7 +19,7 @@ avatar.thumbnail(slot_size)
 all_genstat = [
     'uid',
     'level',
-    'nickname',
+    'nickname',s
     'server_name',
     'achievements',
     'days_active',
@@ -51,7 +51,6 @@ async def get_client(Hid,HtokenId):
         GenStats = info(data.uid, data.level, data.nickname,data.server_name)
         
         return GenStats
-    
     except:
         return False
     
@@ -80,10 +79,10 @@ class PlayerСard(object):
         client = genshin.Client(self.cookies)
         if uid != 0:
             client = genshin.Client(self.cookies)
-            record = await client.get_record_card(fuid) #Имя игрока
+            record = await client.get_record_card(fuid) 
             info: dict[str, int] = collections.namedtuple('GenStats', all_genstat)
             try:
-                data = await client.get_genshin_user(record.uid) #Получаем игровую статистику
+                data = await client.get_genshin_user(record.uid)
                 GenStats = info(record.uid, record.level, record.nickname,record.server_name,data.stats.achievements,data.stats.days_active,data.stats.characters,data.stats.spiral_abyss,data.stats.anemoculi,data.stats.geoculi,data.stats.electroculi,data.stats.common_chests,data.stats.exquisite_chests,data.stats.precious_chests,data.stats.luxurious_chests,data.stats.remarkable_chests,data.stats.unlocked_waypoints,data.stats.unlocked_domains)
             except:
                 return False
@@ -129,5 +128,4 @@ class PlayerСard(object):
         #5
         text.text((160,1242), str(GenStats.luxurious_chests), font=font_stats, fill=(255,255,255,255))
 
-
-        return await up_img(img)
+        await up_img(img)
