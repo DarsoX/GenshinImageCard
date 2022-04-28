@@ -19,7 +19,7 @@ avatar.thumbnail(slot_size)
 all_genstat = [
     'uid',
     'level',
-    'nickname',s
+    'nickname',
     'server_name',
     'achievements',
     'days_active',
