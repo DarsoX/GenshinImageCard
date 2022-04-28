@@ -15,6 +15,28 @@ font_name_text = ImageFont.truetype("font/Genshin_Impact.ttf", 24)
 avatar = Image.open('img/ava.png')
 avatar.thumbnail(slot_size)
 
+
+all_genstat = [
+    'uid',
+    'level',
+    'nickname',
+    'server_name',
+    'achievements',
+    'days_active',
+    'characters',
+    'spiral_abyss',
+    'anemoculi',
+    'geoculi',
+    'electroculi',
+    'common_chests',
+    'exquisite_chests',
+    'precious_chests',
+    'luxurious_chests',
+    'remarkable_chests',
+    'unlocked_waypoints',
+    'unlocked_domains'
+    ]
+
 async def up_img(img):
     img.save("Card.png")
     print('save')
@@ -31,7 +53,7 @@ async def get_client(Hid,HtokenId):
         return GenStats
     
     except:
-        return None
+        return False
     
 class PlayerСard(object):
     def __init__(self, HtokenId:str = '', Hid:int = 0):
@@ -59,35 +81,19 @@ class PlayerСard(object):
         if uid != 0:
             client = genshin.Client(self.cookies)
             record = await client.get_record_card(fuid) #Имя игрока
-            info: dict[str, int] = collections.namedtuple('GenStats', ['uid','level','nickname','server_name'])
+            info: dict[str, int] = collections.namedtuple('GenStats', all_genstat)
             try:
-                uid = record.uid
-                level = record.level
-                nickname = record.nickname
-                server_name = record.server_name
+                data = await client.get_genshin_user(record.uid) #Получаем игровую статистику
+                GenStats = info(record.uid, record.level, record.nickname,record.server_name,data.stats.achievements,data.stats.days_active,data.stats.characters,data.stats.spiral_abyss,data.stats.anemoculi,data.stats.geoculi,data.stats.electroculi,data.stats.common_chests,data.stats.exquisite_chests,data.stats.precious_chests,data.stats.luxurious_chests,data.stats.remarkable_chests,data.stats.unlocked_waypoints,data.stats.unlocked_domains)
             except:
-                return False,False,False,False,False,False,False,False,False,False,False,False,False,False,False
-
-        data = await client.get_genshin_user(uid) #Получаем игровую статистику
-        achievements = data.stats.achievements #Достижения
-        days_active = data.stats.days_active #Актив день
-        characters = data.stats.characters #Персонажей
-        spiral_abyss = data.stats.spiral_abyss #Бездна
-        anemoculi = data.stats.anemoculi #Анемокулы
-        geoculi = data.stats.geoculi #Геокулы
-        electroculi = data.stats.electroculi #Электрокулы
-        common_chests = data.stats.common_chests #Обычный сундук
-        exquisite_chests = data.stats.exquisite_chests #Большой сундук
-        precious_chests = data.stats.precious_chests #Драгоценный сундук
-        luxurious_chests = data.stats.luxurious_chests #Роскошный сундук
-        remarkable_chests = data.stats.remarkable_chests #Удивительный сундук
-        unlocked_waypoints = data.stats.unlocked_waypoints #Телепорты
-        unlocked_domains = data.stats.unlocked_domains #Подземелья
-        return achievements, days_active, characters,spiral_abyss,anemoculi,geoculi,electroculi,common_chests,exquisite_chests,precious_chests,luxurious_chests,remarkable_chests,unlocked_waypoints,unlocked_domains, uid,level,nickname, server_name
+                return False
+        return GenStats
 
 
     async def creat(self, frend_hid: int = 0):
-        achievements, days_active, characters,spiral_abyss,anemoculi,geoculi,electroculi,common_chests,exquisite_chests,precious_chests,luxurious_chests,remarkable_chests,unlocked_waypoints,unlocked_domains, uid,level,nickname,server_name = await self.get_genshinStats(fuid = frend_hid)
+        GenStats = await self.get_genshinStats(fuid = frend_hid)
+        if not GenStats:
+            return False
         # Avatar Add
         img = bg.copy()
         img.paste(avatar, (59,153))
@@ -95,33 +101,33 @@ class PlayerСard(object):
 
         # Name Banner Add
         text = ImageDraw.Draw(img)
-        text.text((354,226), f"{nickname} | {level} Lvl", font=font_name, fill=(255,255,255,255))
+        text.text((354,226), f"{GenStats.nickname} | {GenStats.level} Lvl", font=font_name, fill=(255,255,255,255))
 
-        text.text((354,273), f"{server_name.replace('Server', '')} | UID: {uid}", font=font_name_text, fill=(255,255,255,255))
+        text.text((354,273), f"{GenStats.server_name.replace('Server', '')} | UID: {GenStats.uid}", font=font_name_text, fill=(255,255,255,255))
 
         # Name Stats Add
         #1
-        text.text((150,497), str(days_active), font=font_stats, fill=(255,255,255,255))
-        text.text((405,497), str(achievements), font=font_stats, fill=(255,255,255,255))
-        text.text((649,497), str(characters), font=font_stats, fill=(255,255,255,255))
+        text.text((150,497), str(GenStats.days_active), font=font_stats, fill=(255,255,255,255))
+        text.text((405,497), str(GenStats.achievements), font=font_stats, fill=(255,255,255,255))
+        text.text((649,497), str(GenStats.characters), font=font_stats, fill=(255,255,255,255))
 
         #2
-        text.text((160,688), str(anemoculi), font=font_stats, fill=(255,255,255,255))
-        text.text((405,688), str(geoculi), font=font_stats, fill=(255,255,255,255))
-        text.text((649,688), str(electroculi), font=font_stats, fill=(255,255,255,255))
+        text.text((160,688), str(GenStats.anemoculi), font=font_stats, fill=(255,255,255,255))
+        text.text((405,688), str(GenStats.geoculi), font=font_stats, fill=(255,255,255,255))
+        text.text((649,688), str(GenStats.electroculi), font=font_stats, fill=(255,255,255,255))
 
         #3
-        text.text((160,882), str(unlocked_waypoints), font=font_stats, fill=(255,255,255,255))
-        text.text((405,882), str(unlocked_domains), font=font_stats, fill=(255,255,255,255))
-        text.text((649,882), str(spiral_abyss), font=font_stats, fill=(255,255,255,255))
+        text.text((160,882), str(GenStats.unlocked_waypoints), font=font_stats, fill=(255,255,255,255))
+        text.text((405,882), str(GenStats.unlocked_domains), font=font_stats, fill=(255,255,255,255))
+        text.text((649,882), str(GenStats.spiral_abyss), font=font_stats, fill=(255,255,255,255))
 
         #4
-        text.text((160,1066), str(common_chests), font=font_stats, fill=(255,255,255,255))
-        text.text((405,1066), str(exquisite_chests), font=font_stats, fill=(255,255,255,255))
-        text.text((649,1066), str(precious_chests), font=font_stats, fill=(255,255,255,255))
+        text.text((160,1066), str(GenStats.common_chests), font=font_stats, fill=(255,255,255,255))
+        text.text((405,1066), str(GenStats.exquisite_chests), font=font_stats, fill=(255,255,255,255))
+        text.text((649,1066), str(GenStats.precious_chests), font=font_stats, fill=(255,255,255,255))
 
         #5
-        text.text((160,1242), str(luxurious_chests), font=font_stats, fill=(255,255,255,255))
+        text.text((160,1242), str(GenStats.luxurious_chests), font=font_stats, fill=(255,255,255,255))
 
 
         return await up_img(img)
